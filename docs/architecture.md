@@ -10,9 +10,7 @@ There is no backend service in the published dashboard. The generated JSONL and 
 ## Data Flow
 
 ```text
-repos.csv
-  -> deno run -A main.ts repos-from-csv
-  -> resources/repos.yaml
+resources/repos.yaml
   -> deno run -A main.ts stat
   -> data/community/<os>/data.jsonl
   -> data/community/<os>/logs/*.log
@@ -20,21 +18,19 @@ repos.csv
   -> index.html + web.js
 ```
 
-`repos.csv` is only a bootstrap input. Once `resources/repos.yaml` exists, CI reads only YAML.
-
 ## Runtime Pieces
 
-| File                                    | Responsibility                                                                                     |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `main.ts`                               | CLI parsing and command dispatch.                                                                  |
-| `lib/community_types.ts`                | Zod schemas and TypeScript types for config, tasks, metadata, and result records.                  |
-| `lib/community_config.ts`               | GitHub URL normalization, CSV parsing, YAML loading, matrix expansion, command template expansion. |
-| `lib/community_health.ts`               | Repository cloning, command execution, timeout handling, result/log writing.                       |
-| `lib/moon.ts`                           | MoonBit toolchain version discovery.                                                               |
-| `lib/utils.ts`                          | Bounded concurrency helper.                                                                        |
-| `web.ts`                                | Preact static dashboard.                                                                           |
-| `.github/workflows/community-cakes.yml` | Scheduled nightly collection and GitHub Pages publish.                                             |
-| `Dockerfile.linux-x64`                  | Custom Linux collection image.                                                                     |
+| File                                    | Responsibility                                                                        |
+| --------------------------------------- | ------------------------------------------------------------------------------------- |
+| `main.ts`                               | CLI parsing and command dispatch.                                                     |
+| `lib/community_types.ts`                | Zod schemas and TypeScript types for config, tasks, metadata, and result records.     |
+| `lib/community_config.ts`               | GitHub URL normalization, YAML loading, matrix expansion, command template expansion. |
+| `lib/community_health.ts`               | Repository cloning, command execution, timeout handling, result/log writing.          |
+| `lib/moon.ts`                           | MoonBit toolchain version discovery.                                                  |
+| `lib/utils.ts`                          | Bounded concurrency helper.                                                           |
+| `web.ts`                                | Preact static dashboard.                                                              |
+| `.github/workflows/community-cakes.yml` | Scheduled nightly collection and GitHub Pages publish.                                |
+| `Dockerfile.linux-x64`                  | Custom Linux collection image.                                                        |
 
 ## Collection Model
 

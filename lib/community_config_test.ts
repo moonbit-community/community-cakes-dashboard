@@ -1,4 +1,4 @@
-import { expandCommand, expandReposConfig, normalizeGitHubLink, reposConfigFromCsv } from './community_config.ts';
+import { expandCommand, expandReposConfig, normalizeGitHubLink } from './community_config.ts';
 import { ReposConfig } from './community_types.ts';
 
 function assertEquals(actual: unknown, expected: unknown) {
@@ -7,35 +7,8 @@ function assertEquals(actual: unknown, expected: unknown) {
   }
 }
 
-function assertThrows(fn: () => unknown, expectedMessage: string) {
-  try {
-    fn();
-  } catch (error) {
-    if (error instanceof Error && error.message.includes(expectedMessage)) {
-      return;
-    }
-    throw error;
-  }
-
-  throw new Error(`Expected function to throw: ${expectedMessage}`);
-}
-
 Deno.test('normalizeGitHubLink removes trailing slash and git suffix', () => {
   assertEquals(normalizeGitHubLink(' https://github.com/example/project.git/ '), 'https://github.com/example/project');
-});
-
-Deno.test('reposConfigFromCsv parses quoted CSV and detects duplicates', () => {
-  const config = reposConfigFromCsv('link,branch\n"https://github.com/example/a.git",main\n');
-  assertEquals(Object.keys(config.repos), ['https://github.com/example/a']);
-  assertEquals(config.repos['https://github.com/example/a'].branch, 'main');
-
-  assertThrows(
-    () =>
-      reposConfigFromCsv(
-        'link,branch\nhttps://github.com/example/a,main\nhttps://github.com/example/a.git,main\n',
-      ),
-    'Duplicate repository',
-  );
 });
 
 Deno.test('expandReposConfig applies module matrix and ordered overrides', () => {

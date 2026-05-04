@@ -2,12 +2,10 @@ import { parseArgs } from '@std/cli/parse-args';
 import { join } from '@std/path/join';
 import z from 'zod';
 import { communityStat, writeCommunityJsonl } from './lib/community_health.ts';
-import { writeReposConfigFromCsv } from './lib/community_config.ts';
 import { type CommunityOS, CommunityOSSchema, ReposConfigSchema } from './lib/community_types.ts';
 
 type Cli =
   | { subcommand: 'stat'; options: { config?: string; outDir?: string; os?: CommunityOS; maxConcurrentRepos?: number } }
-  | { subcommand: 'repos-from-csv'; options: { csv: string; out: string } }
   | { subcommand: 'schema' };
 
 function showHelp() {
@@ -19,7 +17,6 @@ USAGE:
 
 SUBCOMMANDS:
     stat             Run MoonBit nightly health checks from resources/repos.yaml
-    repos-from-csv   Generate resources/repos.yaml from repos.csv
     schema           Generate resources/repos.schema.json
 
 GLOBAL OPTIONS:
@@ -39,20 +36,6 @@ OPTIONS:
     --out-dir <PATH>                 Output directory [default: data/community/<os>]
     --os <OS>                        windows-x64, macos-arm64, or linux-x64 [default: auto]
     --max-concurrent-repos <NUMBER>  Maximum concurrent repositories [default: 2]
-    -h, --help                       Show this help message
-`);
-}
-
-function showReposFromCsvHelp() {
-  console.log(`
-Generate repos.yaml from repos.csv
-
-USAGE:
-    deno run -A main.ts repos-from-csv [OPTIONS]
-
-OPTIONS:
-    --csv <PATH>                     Input CSV with link,branch columns [default: repos.csv]
-    --out <PATH>                     Output repos.yaml path [default: resources/repos.yaml]
     -h, --help                       Show this help message
 `);
 }
@@ -89,27 +72,6 @@ function parseStatArgs(args: string[]): Cli {
   };
 }
 
-function parseReposFromCsvArgs(args: string[]): Cli {
-  const parsed = parseArgs(args, {
-    string: ['csv', 'out'],
-    boolean: ['help'],
-    alias: { h: 'help' },
-  });
-
-  if (parsed.help) {
-    showReposFromCsvHelp();
-    Deno.exit(0);
-  }
-
-  return {
-    subcommand: 'repos-from-csv',
-    options: {
-      csv: parsed.csv ?? 'repos.csv',
-      out: parsed.out ?? 'resources/repos.yaml',
-    },
-  };
-}
-
 function parseCli(args: string[]): Cli {
   const parsed = parseArgs(args, {
     boolean: ['help'],
@@ -127,8 +89,6 @@ function parseCli(args: string[]): Cli {
   switch (subcommand) {
     case 'stat':
       return parseStatArgs(rest);
-    case 'repos-from-csv':
-      return parseReposFromCsvArgs(rest);
     case 'schema':
       return { subcommand: 'schema' };
     default:
@@ -144,9 +104,6 @@ try {
     const path = join(dashboard.outDir, 'data.jsonl');
     await writeCommunityJsonl(path, dashboard.metadata, dashboard.result);
     console.log(`Wrote ${dashboard.result.length} health records to ${path}`);
-  } else if (cli.subcommand === 'repos-from-csv') {
-    const count = await writeReposConfigFromCsv(cli.options.csv, cli.options.out);
-    console.log(`Wrote ${count} repositories to ${cli.options.out}`);
   } else if (cli.subcommand === 'schema') {
     await Deno.mkdir('resources', { recursive: true });
     await Deno.writeTextFile(

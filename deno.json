@@ -1,7 +1,6 @@
 {
   "tasks": {
     "stat": "deno run -A main.ts stat",
-    "repos-from-csv": "deno run -A main.ts repos-from-csv",
     "schema": "deno run -A main.ts schema",
     "bundle": "deno bundle web.ts -o web.js",
     "dev": "deno bundle web.ts -o web.js --watch",

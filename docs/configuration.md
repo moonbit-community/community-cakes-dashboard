@@ -1,22 +1,6 @@
 # Configuration
 
-`resources/repos.yaml` is the source of truth for Community Cakes Dashboard collection. `repos.csv` is only used to
-generate a first draft.
-
-## Generate From CSV
-
-```sh
-node scripts/get_moonbit_community_repos.mjs > repos.csv
-deno run -A main.ts repos-from-csv --csv repos.csv --out resources/repos.yaml
-```
-
-The CSV must contain:
-
-- `link`: GitHub repository page URL
-- `branch`: branch to check out
-
-Repository links are normalized by trimming trailing slashes and removing a `.git` suffix. Duplicate normalized links
-are rejected.
+`resources/repos.yaml` is the source of truth for Community Cakes Dashboard collection.
 
 ## Top-Level Shape
 
