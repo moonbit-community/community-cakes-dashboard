@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=repos.schema.json
+schema_version: 1
+
+defaults:
+  matrix:
+    os:
+      - windows-x64
+      - macos-arm64
+      - linux-x64
+    backends:
+      - wasm
+      - wasm-gc
+      - js
+      - native
+
+  commands:
+    check:
+      argv:
+        - 'moon'
+        - 'check'
+        - '--target'
+        - '{backend}'
+      timeout_seconds: 600
+
+    test:
+      argv:
+        - 'moon'
+        - 'test'
+        - '--target'
+        - '{backend}'
+      timeout_seconds: 1200
+      run_after: check_passed
+
+repos:
+  'https://github.com/moonbit-community/NyaCSV':
+    branch: main
