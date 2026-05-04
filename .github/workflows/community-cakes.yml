@@ -24,10 +24,10 @@ jobs:
             runner: ubuntu-latest
             mode: docker
           - id: macos-arm64
-            runner: moonbit-nightly-macos-arm64
+            runner: macos-latest
             mode: host
           - id: windows-x64
-            runner: moonbit-nightly-windows-x64
+            runner: windows-latest
             mode: host
     runs-on: ${{ matrix.os.runner }}
     steps:
