@@ -77,9 +77,10 @@ Open `http://127.0.0.1:8765/`.
 
 Collection jobs:
 
-- `linux-x64`: builds and runs `Dockerfile.linux-x64` on `ubuntu-latest`
-- `macos-arm64`: runs on `moonbit-nightly-macos-arm64`
-- `windows-x64`: runs on `moonbit-nightly-windows-x64`
+- `linux-x64`: builds `Dockerfile.linux-x64` on `ubuntu-latest`, then installs MoonBit nightly inside the container
+  before collection
+- `macos-arm64`: runs on `macos-latest` and installs MoonBit nightly before collection
+- `windows-x64`: runs on `windows-latest` and installs MoonBit nightly before collection
 
 The publish job downloads artifacts, bundles `web.ts`, copies `index.html`, `web.js`, and `data/`, then deploys to
 GitHub Pages.

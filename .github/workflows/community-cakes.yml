@@ -73,7 +73,7 @@ jobs:
         if: ${{ matrix.os.mode == 'docker' }}
         run: docker build -f Dockerfile.linux-x64 -t community-cakes-linux-x64 .
 
-      - name: Collect in linux-x64 image
+      - name: Install MoonBit nightly and collect in linux-x64 image
         if: ${{ matrix.os.mode == 'docker' }}
         run: |
           docker run --rm \
@@ -82,11 +82,17 @@ jobs:
             -v "$PWD:/workspace" \
             -w /workspace \
             community-cakes-linux-x64 \
-            deno run -A main.ts stat \
-              --config resources/repos.yaml \
-              --os linux-x64 \
-              --out-dir data/community/linux-x64 \
-              --max-concurrent-repos 2
+            bash -euo pipefail -c '
+              curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s nightly
+              export PATH="$HOME/.moon/bin:$PATH"
+              moon version --all
+              moon update
+              deno run -A main.ts stat \
+                --config resources/repos.yaml \
+                --os linux-x64 \
+                --out-dir data/community/linux-x64 \
+                --max-concurrent-repos 2
+            '
 
       - name: Upload data
         uses: actions/upload-artifact@v4
