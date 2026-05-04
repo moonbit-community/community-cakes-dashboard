@@ -22,7 +22,7 @@ jobs:
         os:
           - id: linux-x64
             runner: ubuntu-latest
-            mode: docker
+            mode: host
           - id: macos-arm64
             runner: macos-latest
             mode: host
@@ -38,7 +38,7 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Install MoonBit nightly on macOS
+      - name: Install MoonBit nightly on Unix
         if: ${{ matrix.os.mode == 'host' && runner.os != 'Windows' }}
         shell: bash
         run: |
@@ -68,31 +68,6 @@ jobs:
             --os ${{ matrix.os.id }} \
             --out-dir data/community/${{ matrix.os.id }} \
             --max-concurrent-repos 2
-
-      - name: Build linux-x64 image
-        if: ${{ matrix.os.mode == 'docker' }}
-        run: docker build -f Dockerfile.linux-x64 -t community-cakes-linux-x64 .
-
-      - name: Install MoonBit nightly and collect in linux-x64 image
-        if: ${{ matrix.os.mode == 'docker' }}
-        run: |
-          docker run --rm \
-            -e GITHUB_ACTION_RUN_ID \
-            -e GITHUB_ACTION_RUN_NUMBER \
-            -v "$PWD:/workspace" \
-            -w /workspace \
-            community-cakes-linux-x64 \
-            bash -euo pipefail -c '
-              curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s nightly
-              export PATH="$HOME/.moon/bin:$PATH"
-              moon version --all
-              moon update
-              deno run -A main.ts stat \
-                --config resources/repos.yaml \
-                --os linux-x64 \
-                --out-dir data/community/linux-x64 \
-                --max-concurrent-repos 2
-            '
 
       - name: Upload data
         uses: actions/upload-artifact@v4

@@ -30,7 +30,6 @@ resources/repos.yaml
 | `lib/utils.ts`                          | Bounded concurrency helper.                                                           |
 | `web.ts`                                | Preact static dashboard.                                                              |
 | `.github/workflows/community-cakes.yml` | Scheduled nightly collection and GitHub Pages publish.                                |
-| `Dockerfile.linux-x64`                  | Custom Linux collection image with system dependencies.                               |
 
 ## Collection Model
 
@@ -59,11 +58,10 @@ cell is opened.
 
 The public OS ids are the stable dashboard and config identifiers:
 
-| OS id         | Intended environment                                                                     |
-| ------------- | ---------------------------------------------------------------------------------------- |
-| `linux-x64`   | Linux x64 inside `Dockerfile.linux-x64`; CI installs nightly MoonBit at collection time. |
-| `macos-arm64` | GitHub-hosted macOS runner with nightly MoonBit installed by CI.                         |
-| `windows-x64` | GitHub-hosted Windows runner with nightly MoonBit installed by CI.                       |
+| OS id         | Intended environment                                               |
+| ------------- | ------------------------------------------------------------------ |
+| `linux-x64`   | `ubuntu-latest` runner with nightly MoonBit installed by CI.       |
+| `macos-arm64` | GitHub-hosted macOS runner with nightly MoonBit installed by CI.   |
+| `windows-x64` | GitHub-hosted Windows runner with nightly MoonBit installed by CI. |
 
-The GitHub workflow installs MoonBit nightly during each collection job so toolchain updates are not hidden by image
-build cache.
+The GitHub workflow installs MoonBit nightly during each collection job so each run uses the current toolchain.

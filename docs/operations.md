@@ -9,7 +9,6 @@ Requirements:
 - Deno 2.x
 - Git
 - MoonBit toolchain in `PATH` for local collection
-- Docker if you want to test the Linux collection image
 
 Useful checks:
 
@@ -77,8 +76,7 @@ Open `http://127.0.0.1:8765/`.
 
 Collection jobs:
 
-- `linux-x64`: builds `Dockerfile.linux-x64` on `ubuntu-latest`, then installs MoonBit nightly inside the container
-  before collection
+- `linux-x64`: runs on `ubuntu-latest` and installs MoonBit nightly before collection
 - `macos-arm64`: runs on `macos-latest` and installs MoonBit nightly before collection
 - `windows-x64`: runs on `windows-latest` and installs MoonBit nightly before collection
 
