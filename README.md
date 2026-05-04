@@ -20,13 +20,6 @@ the checked repository domain, not to a separate project name.
 
 ## Configuration
 
-Generate a draft repository config from the community repo CSV:
-
-```sh
-node scripts/get_moonbit_community_repos.mjs > repos.csv
-deno run -A main.ts repos-from-csv --csv repos.csv --out resources/repos.yaml
-```
-
 `resources/repos.yaml` is the CI source of truth. It supports repo-level and module-level matrix overrides, custom
 commands, skip rules, environment overrides, and multi-module repositories.
 
