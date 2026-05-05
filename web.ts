@@ -162,6 +162,25 @@ function countRows(rows: RowData[]): Record<Filter, number> {
   };
 }
 
+function pad2(value: number): string {
+  return value.toString().padStart(2, '0');
+}
+
+function formatGeneratedAt(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value.length >= 16 ? value.slice(0, 16).replace('T', ' ') : value;
+  }
+
+  return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())} ${pad2(date.getHours())}:${
+    pad2(date.getMinutes())
+  }`;
+}
+
+function formatToolchainVersion(version: string[] | undefined): string {
+  return version?.join('\n').trim() || '-';
+}
+
 function osSummary(row: RowData, os: OS): { status: CellStatus; label: string } {
   let pass = 0;
   let error = 0;
@@ -357,8 +376,14 @@ function App() {
     showPassRows,
   ]);
   const counts = useMemo(() => countRows(rows), [rows]);
-  const generatedAt = OSES.map((os) => data[os].metadata?.generated_at).filter(Boolean).sort().at(-1) ?? '-';
-  const toolchain = OSES.map((os) => data[os].metadata?.toolchainVersion?.[0]).find(Boolean) ?? '-';
+  const generatedAtRaw = OSES.map((os) => data[os].metadata?.generated_at).filter((value): value is string =>
+    Boolean(value)
+  ).sort().at(-1);
+  const generatedAt = generatedAtRaw ? formatGeneratedAt(generatedAtRaw) : '-';
+  const toolchainVersion = OSES.map((os) => data[os].metadata?.toolchainVersion).find((
+    version,
+  ): version is string[] => Array.isArray(version) && version.length > 0);
+  const toolchain = formatToolchainVersion(toolchainVersion);
 
   if (loading) {
     return html`
@@ -400,11 +425,14 @@ function App() {
         )}
 
         <div
-          style="min-width: 280px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; background: #f8fafc; font-size: 12px; margin-left: auto;"
+          style="min-width: 320px; max-width: 680px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; background: #f8fafc; font-size: 12px; margin-left: auto;"
         >
-          <div><strong>Generated</strong> ${generatedAt}</div>
-          <div style="margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-            <strong>Toolchain</strong> ${toolchain}
+          <div><strong>Generated</strong> <time title="${generatedAtRaw ?? ''}">${generatedAt}</time></div>
+          <div style="margin-top: 4px;">
+            <strong>Toolchain</strong>
+            <pre
+              style="margin: 4px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace; font-size: 11px; line-height: 1.35;"
+            >${toolchain}</pre>
           </div>
         </div>
       </div>
