@@ -32,5 +32,147 @@ defaults:
       run_after: check_passed
 
 repos:
+  'https://github.com/moonbit-community/adapton.mbt':
+    branch: master
+  'https://github.com/moonbit-community/Algorithms-Moonbit':
+    branch: main
+  'https://github.com/moonbit-community/ArgParser':
+    branch: main
+  'https://github.com/moonbit-community/bitset':
+    branch: main
+  'https://github.com/moonbit-community/color.mbt':
+    branch: master
+  'https://github.com/moonbit-community/dataview.mbt':
+    branch: master
+  'https://github.com/moonbit-community/diff':
+    branch: main
+  'https://github.com/moonbit-community/dot':
+    branch: main
+  'https://github.com/moonbit-community/easing':
+    branch: main
+  'https://github.com/moonbit-community/either':
+    branch: master
+  'https://github.com/moonbit-community/elk':
+    branch: main
+  'https://github.com/moonbit-community/err_marker':
+    branch: main
+  'https://github.com/moonbit-community/find_cluster_break':
+    branch: main
+  'https://github.com/moonbit-community/frontmatter.mbt':
+    branch: master
+  'https://github.com/moonbit-community/GB18030':
+    branch: main
+  'https://github.com/moonbit-community/gitignore':
+    branch: main
+  'https://github.com/moonbit-community/hashbrown':
+    branch: main
+  'https://github.com/moonbit-community/illu-path':
+    branch: master
+  'https://github.com/moonbit-community/immut_BitVector':
+    branch: main
+  'https://github.com/moonbit-community/immut_IntervalTree':
+    branch: main
+  'https://github.com/moonbit-community/ImmutableMultiset':
+    branch: master
+  'https://github.com/moonbit-community/IndexMap':
+    branch: master
+  'https://github.com/moonbit-community/IndexSet':
+    branch: master
+  'https://github.com/moonbit-community/IntervalTree':
+    branch: main
+  'https://github.com/moonbit-community/intmap':
+    branch: main
+  'https://github.com/moonbit-community/ipaddr':
+    branch: main
+  'https://github.com/moonbit-community/jsondiff':
+    branch: main
+  'https://github.com/moonbit-community/kdtree':
+    branch: main
+  'https://github.com/moonbit-community/lisp_interpreter':
+    branch: main
+  'https://github.com/moonbit-community/lossless_syntax_trees':
+    branch: main
+  'https://github.com/moonbit-community/moon_dagre':
+    branch: main
+  'https://github.com/moonbit-community/moon_elk':
+    branch: main
+  'https://github.com/moonbit-community/moon_rapier':
+    branch: main
+  'https://github.com/moonbit-community/moon_skrifa':
+    branch: main
+  'https://github.com/moonbit-community/moon_wesl':
+    branch: main
+  'https://github.com/moonbit-community/moon_wgsl':
+    branch: main
+  'https://github.com/moonbit-community/moonbit-jq':
+    branch: main
+  'https://github.com/moonbit-community/MoonbitBSON':
+    branch: main
+  'https://github.com/moonbit-community/moondsa':
+    branch: main
+  'https://github.com/moonbit-community/msgpack':
+    branch: main
+  'https://github.com/moonbit-community/murmur3':
+    branch: main
+  'https://github.com/moonbit-community/nameparser':
+    branch: main
   'https://github.com/moonbit-community/NyaCSV':
+    branch: main
+  'https://github.com/moonbit-community/NyaNBT':
+    branch: main
+  'https://github.com/moonbit-community/NyaSearch':
+    branch: main
+  'https://github.com/moonbit-community/path.mbt':
+    branch: master
+  'https://github.com/moonbit-community/pem.mbt':
+    branch: main
+  'https://github.com/moonbit-community/propagator':
+    branch: main
+  'https://github.com/moonbit-community/ptmap':
+    branch: master
+  'https://github.com/moonbit-community/pug-mbt':
+    branch: main
+  'https://github.com/moonbit-community/qrc':
+    branch: main
+  'https://github.com/moonbit-community/quickxorhash':
+    branch: main
+  'https://github.com/moonbit-community/ryu.mbt':
+    branch: master
+  'https://github.com/moonbit-community/simple_parserc':
+    branch: master
+  'https://github.com/moonbit-community/Simplex_Noise':
+    branch: main
+  'https://github.com/moonbit-community/splice':
+    branch: main
+  'https://github.com/moonbit-community/sqlparser':
+    branch: main
+  'https://github.com/moonbit-community/state':
+    branch: main
+  'https://github.com/moonbit-community/sudoku':
+    branch: main
+  'https://github.com/moonbit-community/sw-router':
+    branch: main
+  'https://github.com/moonbit-community/SwissTable':
+    branch: main
+  'https://github.com/moonbit-community/text.mbt':
+    branch: main
+  'https://github.com/moonbit-community/toml-parser':
+    branch: main
+  'https://github.com/moonbit-community/trie':
+    branch: main
+  'https://github.com/moonbit-community/unicodeUtil':
+    branch: master
+  'https://github.com/moonbit-community/unicodewidth.mbt':
+    branch: master
+  'https://github.com/moonbit-community/UnificationTable':
+    branch: master
+  'https://github.com/moonbit-community/unmarshal.mbt':
+    branch: main
+  'https://github.com/moonbit-community/uri':
+    branch: main
+  'https://github.com/moonbit-community/version.mbt':
+    branch: master
+  'https://github.com/moonbit-community/zipc':
+    branch: main
+  'https://github.com/moonbit-community/zstd':
     branch: main
