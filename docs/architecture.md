@@ -42,7 +42,11 @@ The collector expands `resources/repos.yaml` into tasks by:
 5. Applying ordered `overrides` for matching `os + backend` pairs.
 6. Emitting one `check` and one conditional `test` record for each `repo + module + os + backend`.
 
-Tests run only after the matching check passes. If check is `Error` or `Skipped`, test is written as `Skipped`.
+Tests run only after the matching check is `Pass` or `Passed with Warning`. If check is `Error` or `Skipped`, test is
+written as `Skipped`.
+
+A successful check becomes `Passed with Warning` when either command output stream contains a line that starts with
+`Warning: [NNNN]`, where each `N` is a digit.
 
 ## Result Files
 

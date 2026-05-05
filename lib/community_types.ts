@@ -12,7 +12,7 @@ export const CommunityStepSchema = z.enum(['check', 'test']);
 export type CommunityStep = z.infer<typeof CommunityStepSchema>;
 export const communitySteps = ['check', 'test'] as const satisfies readonly CommunityStep[];
 
-export const CommunityStatusSchema = z.enum(['Pass', 'Error', 'Skipped']);
+export const CommunityStatusSchema = z.enum(['Pass', 'Passed with Warning', 'Error', 'Skipped']);
 export type CommunityStatus = z.infer<typeof CommunityStatusSchema>;
 
 export const MatrixExcludeSchema = z.object({

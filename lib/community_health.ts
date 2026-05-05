@@ -20,6 +20,7 @@ const MOON_ENV = {
   MOON_IGNORE_PREBUILD: '1',
   MOON_NO_WORKSPACE: '1',
 } as const;
+const WARNING_LINE_PATTERN = /^Warning: \[[0-9]{4}\]/m;
 
 export interface CommunityStatOptions {
   config?: string;
@@ -33,6 +34,18 @@ interface ProcessResult {
   exit_code?: number;
   elapsed: number;
   reason?: string;
+}
+
+export function hasWarningDiagnostic(output: string): boolean {
+  return WARNING_LINE_PATTERN.test(output);
+}
+
+async function commandOutputHasWarning(paths: { stdout_path: string; stderr_path: string }): Promise<boolean> {
+  const [stdout, stderr] = await Promise.all([
+    Deno.readTextFile(paths.stdout_path).catch(() => ''),
+    Deno.readTextFile(paths.stderr_path).catch(() => ''),
+  ]);
+  return hasWarningDiagnostic(stdout) || hasWarningDiagnostic(stderr);
 }
 
 function groupTasks(tasks: CommunityTask[]): CommunityTask[][] {
@@ -240,9 +253,16 @@ async function executeStep(
     paths.stderr_path,
   );
 
+  const hasWarnings = result.success && step === 'check' && await commandOutputHasWarning(paths);
+  const status: CommunityResultRecord['status'] = !result.success
+    ? 'Error'
+    : hasWarnings
+    ? 'Passed with Warning'
+    : 'Pass';
+
   return {
     ...record,
-    status: result.success ? 'Pass' : 'Error',
+    status,
     start_time: startTime,
     elapsed: result.elapsed,
     exit_code: result.exit_code,
@@ -306,7 +326,7 @@ async function executeRepoGroup(dataDir: string, tasks: CommunityTask[]): Promis
       const check = await executeStep(repoDir, dataDir, task, 'check', commitSha);
       records.push(check);
 
-      if (check.status === 'Pass') {
+      if (check.status === 'Pass' || check.status === 'Passed with Warning') {
         records.push(await executeStep(repoDir, dataDir, task, 'test', commitSha));
       } else {
         records.push(skippedAfterCheck(task, commitSha, `Skipped because check was ${check.status}.`));

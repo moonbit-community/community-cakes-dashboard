@@ -11,8 +11,8 @@ const STEPS = ['check', 'test'] as const;
 type OS = (typeof OSES)[number];
 type Backend = (typeof BACKENDS)[number];
 type Step = (typeof STEPS)[number];
-type Filter = 'all' | 'error' | 'skipped' | 'pass';
-type CellStatus = 'pass' | 'error' | 'skipped' | 'missing';
+type Filter = 'all' | 'error' | 'warning' | 'skipped' | 'pass';
+type CellStatus = 'pass' | 'warning' | 'error' | 'skipped' | 'missing';
 
 type DataMap = Record<OS, {
   metadata: CommunityMetadata | null;
@@ -28,6 +28,7 @@ type RowData = {
   cells: Map<string, CommunityResultRecord>;
   status: CellStatus;
   passCount: number;
+  warningCount: number;
   errorCount: number;
   skippedCount: number;
   missingCount: number;
@@ -35,13 +36,23 @@ type RowData = {
 
 const STATUS_COLORS: Record<CellStatus, string> = {
   pass: '#15803d',
+  warning: '#facc15',
   error: '#dc2626',
   skipped: '#64748b',
   missing: '#94a3b8',
 };
 
+const STATUS_TEXT_COLORS: Record<CellStatus, string> = {
+  pass: '#ffffff',
+  warning: '#422006',
+  error: '#ffffff',
+  skipped: '#ffffff',
+  missing: '#ffffff',
+};
+
 const STATUS_LABELS: Record<CellStatus, string> = {
   pass: 'P',
+  warning: 'PA',
   error: 'E',
   skipped: 'S',
   missing: '-',
@@ -49,9 +60,10 @@ const STATUS_LABELS: Record<CellStatus, string> = {
 
 const STATUS_PRIORITY: Record<CellStatus, number> = {
   error: 0,
-  skipped: 1,
-  missing: 2,
-  pass: 3,
+  warning: 1,
+  skipped: 2,
+  missing: 3,
+  pass: 4,
 };
 
 function emptyData(): DataMap {
@@ -72,6 +84,7 @@ function rowKey(record: CommunityResultRecord): string {
 
 function toCellStatus(status: CommunityStatus | undefined): CellStatus {
   if (status === 'Pass') return 'pass';
+  if (status === 'Passed with Warning') return 'warning';
   if (status === 'Error') return 'error';
   if (status === 'Skipped') return 'skipped';
   return 'missing';
@@ -79,6 +92,7 @@ function toCellStatus(status: CommunityStatus | undefined): CellStatus {
 
 function computeRowStatus(row: RowData): CellStatus {
   if (row.errorCount > 0) return 'error';
+  if (row.warningCount > 0) return 'warning';
   if (row.skippedCount > 0) return 'skipped';
   if (row.missingCount > 0) return 'missing';
   return row.passCount > 0 ? 'pass' : 'missing';
@@ -99,6 +113,7 @@ function buildRows(data: DataMap): RowData[] {
         cells: new Map<string, CommunityResultRecord>(),
         status: 'missing' as CellStatus,
         passCount: 0,
+        warningCount: 0,
         errorCount: 0,
         skippedCount: 0,
         missingCount: 0,
@@ -112,6 +127,7 @@ function buildRows(data: DataMap): RowData[] {
   const result = Array.from(rows.values());
   for (const row of result) {
     let passCount = 0;
+    let warningCount = 0;
     let errorCount = 0;
     let skippedCount = 0;
     let missingCount = 0;
@@ -121,6 +137,7 @@ function buildRows(data: DataMap): RowData[] {
         for (const step of STEPS) {
           const status = toCellStatus(row.cells.get(cellKey(os, backend, step))?.status);
           if (status === 'pass') passCount += 1;
+          if (status === 'warning') warningCount += 1;
           if (status === 'error') errorCount += 1;
           if (status === 'skipped') skippedCount += 1;
           if (status === 'missing') missingCount += 1;
@@ -129,6 +146,7 @@ function buildRows(data: DataMap): RowData[] {
     }
 
     row.passCount = passCount;
+    row.warningCount = warningCount;
     row.errorCount = errorCount;
     row.skippedCount = skippedCount;
     row.missingCount = missingCount;
@@ -157,6 +175,7 @@ function countRows(rows: RowData[]): Record<Filter, number> {
   return {
     all: rows.length,
     error: rows.filter((row) => row.status === 'error').length,
+    warning: rows.filter((row) => row.status === 'warning').length,
     skipped: rows.filter((row) => row.status === 'skipped').length,
     pass: rows.filter((row) => row.status === 'pass').length,
   };
@@ -183,6 +202,7 @@ function formatToolchainVersion(version: string[] | undefined): string {
 
 function osSummary(row: RowData, os: OS): { status: CellStatus; label: string } {
   let pass = 0;
+  let warning = 0;
   let error = 0;
   let skipped = 0;
   let missing = 0;
@@ -191,14 +211,24 @@ function osSummary(row: RowData, os: OS): { status: CellStatus; label: string } 
     for (const step of STEPS) {
       const status = toCellStatus(row.cells.get(cellKey(os, backend, step))?.status);
       if (status === 'pass') pass += 1;
+      if (status === 'warning') warning += 1;
       if (status === 'error') error += 1;
       if (status === 'skipped') skipped += 1;
       if (status === 'missing') missing += 1;
     }
   }
 
-  const status = error > 0 ? 'error' : skipped > 0 ? 'skipped' : missing > 0 ? 'missing' : 'pass';
-  return { status, label: `${error}E ${skipped}S ${pass}P${missing ? ` ${missing}-` : ''}` };
+  const status = error > 0
+    ? 'error'
+    : warning > 0
+    ? 'warning'
+    : skipped > 0
+    ? 'skipped'
+    : missing > 0
+    ? 'missing'
+    : 'pass';
+  const warningLabel = warning ? ` ${warning}PA` : '';
+  return { status, label: `${error}E${warningLabel} ${skipped}S ${pass}P${missing ? ` ${missing}-` : ''}` };
 }
 
 async function readJsonl(
@@ -282,7 +312,9 @@ function StatusCell({ status, label, title, record }: {
       onClick="${() => openLogs(record)}"
       style="border: 1px solid #cbd5e1; padding: 5px 6px; text-align: center; background: ${STATUS_COLORS[
         status
-      ]}; color: white; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap;"
+      ]}; color: ${STATUS_TEXT_COLORS[
+        status
+      ]}; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap;"
     >
       ${label}
     </td>
@@ -403,6 +435,7 @@ function App() {
       <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; align-items: stretch;">
         ${([
           ['error', 'Errors', counts.error],
+          ['warning', 'Warnings', counts.warning],
           ['skipped', 'Skipped', counts.skipped],
           ['pass', 'Passing', counts.pass],
           ['all', 'Total', counts.all],

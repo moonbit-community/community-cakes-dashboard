@@ -89,7 +89,11 @@ If a repository cannot be cloned, the check record is `Error` and the matching t
 
 If a command times out, the record is `Error` and `reason` contains the timeout duration.
 
-If a test is skipped unexpectedly, inspect the matching check record first. Tests only run when check is `Pass`.
+If a check succeeds but emits a line starting with `Warning: [NNNN]`, where each `N` is a digit, the record is
+`Passed with Warning` and the dashboard renders it as yellow `PA`.
+
+If a test is skipped unexpectedly, inspect the matching check record first. Tests only run when check is `Pass` or
+`Passed with Warning`.
 
 If the dashboard is blank locally, verify that `web.js` exists and that `data/community/<os>/data.jsonl` is reachable
 from the static server.
