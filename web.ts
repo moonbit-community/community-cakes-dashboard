@@ -337,15 +337,18 @@ function StatusCell({ status, label, title, record }: {
   title: string;
   record?: CommunityResultRecord;
 }) {
+  const onClick = record ? () => openLogs(record) : undefined;
+  const cursor = record ? 'pointer' : 'default';
+
   return html`
     <td
       title="${title}"
-      onClick="${() => openLogs(record)}"
+      onClick="${onClick}"
       style="border: 1px solid #cbd5e1; padding: 5px 6px; text-align: center; background: ${STATUS_COLORS[
         status
       ]}; color: ${STATUS_TEXT_COLORS[
         status
-      ]}; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap;"
+      ]}; font-size: 11px; font-weight: 700; cursor: ${cursor}; white-space: nowrap;"
     >
       ${label}
     </td>
