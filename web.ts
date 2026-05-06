@@ -66,6 +66,8 @@ const STATUS_PRIORITY: Record<CellStatus, number> = {
   pass: 4,
 };
 
+const GITHUB_REPO_PREFIX = 'https://github.com/';
+
 function emptyData(): DataMap {
   return {
     'linux-x64': { metadata: null, results: [] },
@@ -80,6 +82,10 @@ function cellKey(os: OS, backend: Backend, step: Step): string {
 
 function rowKey(record: CommunityResultRecord): string {
   return `${record.repo}\0${record.module_path}`;
+}
+
+function repositoryDisplayName(repo: string): string {
+  return repo.startsWith(GITHUB_REPO_PREFIX) ? repo.slice(GITHUB_REPO_PREFIX.length) : repo;
 }
 
 function toCellStatus(status: CommunityStatus | undefined): CellStatus {
@@ -499,6 +505,7 @@ function App() {
         <tbody>
           ${filteredRows.map((row, index) => {
             const isExpanded = !!expanded[row.key];
+            const repositoryLabel = repositoryDisplayName(row.repo);
             return html`
               <tr style="background: ${index % 2 === 0 ? '#ffffff' : '#f8fafc'};">
                 <td
@@ -511,7 +518,7 @@ function App() {
                     rel="noopener noreferrer"
                     style="display: block; color: #2563eb; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
                   >
-                    ${row.repo}
+                    ${repositoryLabel}
                   </a>
                 </td>
                 <td style="padding: 7px; border: 1px solid #cbd5e1; font-family: monospace;">${row.module_path}</td>
