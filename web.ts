@@ -11,8 +11,8 @@ const STEPS = ['check', 'test'] as const;
 type OS = (typeof OSES)[number];
 type Backend = (typeof BACKENDS)[number];
 type Step = (typeof STEPS)[number];
-type Filter = 'all' | 'error' | 'warning' | 'skipped' | 'pass';
-type CellStatus = 'pass' | 'warning' | 'error' | 'skipped' | 'missing';
+type Filter = 'all' | 'error' | 'warning' | 'skipped' | 'excluded' | 'pass';
+type CellStatus = 'pass' | 'warning' | 'error' | 'skipped' | 'excluded' | 'missing';
 
 type DataMap = Record<OS, {
   metadata: CommunityMetadata | null;
@@ -31,6 +31,7 @@ type RowData = {
   warningCount: number;
   errorCount: number;
   skippedCount: number;
+  excludedCount: number;
   missingCount: number;
 };
 
@@ -39,6 +40,7 @@ const STATUS_COLORS: Record<CellStatus, string> = {
   warning: '#facc15',
   error: '#dc2626',
   skipped: '#64748b',
+  excluded: '#e2e8f0',
   missing: '#94a3b8',
 };
 
@@ -47,6 +49,7 @@ const STATUS_TEXT_COLORS: Record<CellStatus, string> = {
   warning: '#422006',
   error: '#ffffff',
   skipped: '#ffffff',
+  excluded: '#334155',
   missing: '#ffffff',
 };
 
@@ -55,6 +58,7 @@ const STATUS_LABELS: Record<CellStatus, string> = {
   warning: 'PA',
   error: 'E',
   skipped: 'S',
+  excluded: 'EX',
   missing: '-',
 };
 
@@ -64,6 +68,7 @@ const STATUS_PRIORITY: Record<CellStatus, number> = {
   skipped: 2,
   missing: 3,
   pass: 4,
+  excluded: 5,
 };
 
 const GITHUB_REPO_PREFIX = 'https://github.com/';
@@ -93,6 +98,7 @@ function toCellStatus(status: CommunityStatus | undefined): CellStatus {
   if (status === 'Passed with Warning') return 'warning';
   if (status === 'Error') return 'error';
   if (status === 'Skipped') return 'skipped';
+  if (status === 'Excluded') return 'excluded';
   return 'missing';
 }
 
@@ -101,7 +107,8 @@ function computeRowStatus(row: RowData): CellStatus {
   if (row.warningCount > 0) return 'warning';
   if (row.skippedCount > 0) return 'skipped';
   if (row.missingCount > 0) return 'missing';
-  return row.passCount > 0 ? 'pass' : 'missing';
+  if (row.passCount > 0) return 'pass';
+  return row.excludedCount > 0 ? 'excluded' : 'missing';
 }
 
 function buildRows(data: DataMap): RowData[] {
@@ -122,6 +129,7 @@ function buildRows(data: DataMap): RowData[] {
         warningCount: 0,
         errorCount: 0,
         skippedCount: 0,
+        excludedCount: 0,
         missingCount: 0,
       };
       existing.commit_sha = existing.commit_sha ?? record.commit_sha;
@@ -136,6 +144,7 @@ function buildRows(data: DataMap): RowData[] {
     let warningCount = 0;
     let errorCount = 0;
     let skippedCount = 0;
+    let excludedCount = 0;
     let missingCount = 0;
 
     for (const os of OSES) {
@@ -146,6 +155,7 @@ function buildRows(data: DataMap): RowData[] {
           if (status === 'warning') warningCount += 1;
           if (status === 'error') errorCount += 1;
           if (status === 'skipped') skippedCount += 1;
+          if (status === 'excluded') excludedCount += 1;
           if (status === 'missing') missingCount += 1;
         }
       }
@@ -155,6 +165,7 @@ function buildRows(data: DataMap): RowData[] {
     row.warningCount = warningCount;
     row.errorCount = errorCount;
     row.skippedCount = skippedCount;
+    row.excludedCount = excludedCount;
     row.missingCount = missingCount;
     row.status = computeRowStatus(row);
   }
@@ -170,7 +181,11 @@ function buildRows(data: DataMap): RowData[] {
 function filterRows(rows: RowData[], filter: Filter, search: string): RowData[] {
   const keyword = search.trim().toLowerCase();
   return rows.filter((row) => {
-    if (filter !== 'all' && row.status !== filter) return false;
+    if (filter === 'skipped') {
+      if (row.errorCount > 0 || row.skippedCount === 0) return false;
+    } else if (filter === 'excluded') {
+      if (row.excludedCount === 0) return false;
+    } else if (filter !== 'all' && row.status !== filter) return false;
     if (keyword && !`${row.repo} ${row.module_path} ${row.branch}`.toLowerCase().includes(keyword)) return false;
     return true;
   });
@@ -181,7 +196,8 @@ function countRows(rows: RowData[]): Record<Filter, number> {
     all: rows.length,
     error: rows.filter((row) => row.status === 'error').length,
     warning: rows.filter((row) => row.status === 'warning').length,
-    skipped: rows.filter((row) => row.status === 'skipped').length,
+    skipped: rows.filter((row) => row.errorCount === 0 && row.skippedCount > 0).length,
+    excluded: rows.filter((row) => row.excludedCount > 0).length,
     pass: rows.filter((row) => row.status === 'pass').length,
   };
 }
@@ -210,6 +226,7 @@ function osSummary(row: RowData, os: OS): { status: CellStatus; label: string } 
   let warning = 0;
   let error = 0;
   let skipped = 0;
+  let excluded = 0;
   let missing = 0;
 
   for (const backend of BACKENDS) {
@@ -219,6 +236,7 @@ function osSummary(row: RowData, os: OS): { status: CellStatus; label: string } 
       if (status === 'warning') warning += 1;
       if (status === 'error') error += 1;
       if (status === 'skipped') skipped += 1;
+      if (status === 'excluded') excluded += 1;
       if (status === 'missing') missing += 1;
     }
   }
@@ -231,9 +249,17 @@ function osSummary(row: RowData, os: OS): { status: CellStatus; label: string } 
     ? 'skipped'
     : missing > 0
     ? 'missing'
-    : 'pass';
+    : pass > 0
+    ? 'pass'
+    : excluded > 0
+    ? 'excluded'
+    : 'missing';
   const warningLabel = warning ? ` ${warning}PA` : '';
-  return { status, label: `${error}E${warningLabel} ${skipped}S ${pass}P${missing ? ` ${missing}-` : ''}` };
+  const excludedLabel = excluded ? ` ${excluded}EX` : '';
+  return {
+    status,
+    label: `${error}E${warningLabel}${excludedLabel} ${skipped}S ${pass}P${missing ? ` ${missing}-` : ''}`,
+  };
 }
 
 async function readJsonl(
@@ -440,6 +466,7 @@ function App() {
           ['error', 'Errors', counts.error],
           ['warning', 'Warnings', counts.warning],
           ['skipped', 'Skipped', counts.skipped],
+          ['excluded', 'Excluded', counts.excluded],
           ['pass', 'Passing', counts.pass],
           ['all', 'Total', counts.all],
         ] as const).map(([key, label, value]) =>

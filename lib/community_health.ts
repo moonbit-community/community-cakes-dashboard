@@ -282,6 +282,17 @@ function skippedAfterCheck(task: CommunityTask, commitSha: string | undefined, r
   };
 }
 
+function excludedRecords(task: CommunityTask): CommunityResultRecord[] {
+  return (['check', 'test'] as const).map((step) => {
+    const command = task.commands[step];
+    return {
+      ...baseRecord(task, step, command, undefined, undefined),
+      status: 'Excluded',
+      reason: 'Excluded by matrix configuration.',
+    };
+  });
+}
+
 async function cloneFailureRecords(
   dataDir: string,
   tasks: CommunityTask[],
@@ -344,8 +355,10 @@ export async function communityStat(
   const os = options.os ?? getCurrentCommunityOS();
   const outDir = options.outDir ?? `data/community/${os}`;
   const config = await loadReposConfig(options.config ?? 'resources/repos.yaml');
-  const tasks = expandReposConfig(config, os);
-  const groups = groupTasks(tasks);
+  const tasks = expandReposConfig(config, os, { includeExcluded: true });
+  const executableTasks = tasks.filter((task) => !task.excluded);
+  const excludedResult = tasks.filter((task) => task.excluded).flatMap(excludedRecords);
+  const groups = groupTasks(executableTasks);
   const maxConcurrentRepos = options.maxConcurrentRepos ??
     parseInt(Deno.env.get('MAX_CONCURRENT_REPOS') ?? String(DEFAULT_MAX_CONCURRENT_REPOS), 10);
 
@@ -363,7 +376,7 @@ export async function communityStat(
       generated_at: new Date().toISOString(),
       toolchainVersion: await getMoonVersion(),
     },
-    result: groupedResults.flat(),
+    result: [...groupedResults.flat(), ...excludedResult],
   };
 }
 

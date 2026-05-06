@@ -71,6 +71,22 @@ Deno.test('expandReposConfig applies module matrix and ordered overrides', () =>
     'examples/foo:wasm',
   ]);
 
+  const windowsTasks = expandReposConfig(config, 'windows-x64');
+  assertEquals(windowsTasks.map((task) => `${task.module_path}:${task.backend}`), [
+    '.:wasm',
+    'examples/foo:wasm',
+  ]);
+
+  const windowsTasksWithExcluded = expandReposConfig(config, 'windows-x64', { includeExcluded: true });
+  assertEquals(
+    windowsTasksWithExcluded.map((task) => `${task.module_path}:${task.backend}:${task.excluded === true}`),
+    [
+      '.:wasm:false',
+      '.:native:true',
+      'examples/foo:wasm:false',
+    ],
+  );
+
   const native = tasks.find((task) => task.backend === 'native')!;
   assertEquals(native.repo, 'https://github.com/example/project');
   assertEquals(native.commands.test.shell, './scripts/native-test.sh {backend}');

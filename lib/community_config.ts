@@ -27,6 +27,10 @@ type NormalizedMatrix = {
 
 type NormalizedCommands = Record<CommunityStep, CommandSpec>;
 
+export interface ExpandReposConfigOptions {
+  includeExcluded?: boolean;
+}
+
 export interface CommandTemplateContext {
   backend: CommunityBackend;
   os: CommunityOS;
@@ -187,7 +191,11 @@ export function expandCommand(
   return undefined;
 }
 
-export function expandReposConfig(config: ReposConfig, targetOs?: CommunityOS): CommunityTask[] {
+export function expandReposConfig(
+  config: ReposConfig,
+  targetOs?: CommunityOS,
+  options: ExpandReposConfigOptions = {},
+): CommunityTask[] {
   const defaultsMatrix = normalizeMatrix(config.defaults.matrix);
   const defaultsCommands = normalizeCommands(config.defaults);
   const tasks: CommunityTask[] = [];
@@ -208,7 +216,8 @@ export function expandReposConfig(config: ReposConfig, targetOs?: CommunityOS): 
         if (targetOs !== undefined && os !== targetOs) continue;
 
         for (const backend of matrix.backends) {
-          if (isExcluded(os, backend, matrix.exclude)) continue;
+          const excluded = isExcluded(os, backend, matrix.exclude);
+          if (excluded && !options.includeExcluded) continue;
 
           let commands = mergeCommands(moduleCommands);
           let defaultWorkingDirectory = modulePath;
@@ -230,6 +239,7 @@ export function expandReposConfig(config: ReposConfig, targetOs?: CommunityOS): 
             module_path: modulePath,
             os,
             backend,
+            excluded: excluded ? true : undefined,
             commands: {
               check: materializeCommand(commands.check, 'check', defaultWorkingDirectory, overrideEnv),
               test: materializeCommand(commands.test, 'test', defaultWorkingDirectory, overrideEnv),

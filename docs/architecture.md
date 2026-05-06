@@ -42,6 +42,9 @@ The collector expands `resources/repos.yaml` into tasks by:
 5. Applying ordered `overrides` for matching `os + backend` pairs.
 6. Emitting one `check` and one conditional `test` record for each `repo + module + os + backend`.
 
+Matrix entries matched by `exclude` still emit `Excluded` records for both `check` and `test`. They are rendered as `EX`
+and ignored by row-level health classification.
+
 Tests run only after the matching check is `Pass` or `Passed with Warning`. If check is `Error` or `Skipped`, test is
 written as `Skipped`.
 

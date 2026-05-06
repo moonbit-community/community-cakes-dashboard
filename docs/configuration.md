@@ -73,6 +73,9 @@ exclude:
   - backend: native
 ```
 
+Excluded matrix entries are written to the result data as `Excluded` records. The dashboard renders them as `EX` and
+does not treat them as failures, skips, or missing data.
+
 ## Commands
 
 A command uses exactly one of `argv`, `shell`, or `skip: true`.

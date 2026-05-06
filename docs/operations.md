@@ -87,6 +87,8 @@ GitHub Pages.
 
 If a repository cannot be cloned, the check record is `Error` and the matching test record is `Skipped`.
 
+If a matrix entry is excluded by configuration, both its check and test records are `Excluded` and render as `EX`.
+
 If a command times out, the record is `Error` and `reason` contains the timeout duration.
 
 If a check succeeds but emits a line starting with `Warning: [NNNN]`, where each `N` is a digit, the record is
