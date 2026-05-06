@@ -161,10 +161,9 @@ function buildRows(data: DataMap): RowData[] {
   return result;
 }
 
-function filterRows(rows: RowData[], filter: Filter, search: string, showPassRows: boolean): RowData[] {
+function filterRows(rows: RowData[], filter: Filter, search: string): RowData[] {
   const keyword = search.trim().toLowerCase();
   return rows.filter((row) => {
-    if (!showPassRows && row.status === 'pass') return false;
     if (filter !== 'all' && row.status !== filter) return false;
     if (keyword && !`${row.repo} ${row.module_path} ${row.branch}`.toLowerCase().includes(keyword)) return false;
     return true;
@@ -378,7 +377,6 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>('all');
   const [search, setSearch] = useState('');
-  const [showPassRows, setShowPassRows] = useState(false);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -401,11 +399,10 @@ function App() {
   }, []);
 
   const rows = useMemo(() => buildRows(data), [data]);
-  const filteredRows = useMemo(() => filterRows(rows, filter, search, showPassRows), [
+  const filteredRows = useMemo(() => filterRows(rows, filter, search), [
     rows,
     filter,
     search,
-    showPassRows,
   ]);
   const counts = useMemo(() => countRows(rows), [rows]);
   const generatedAtRaw = OSES.map((os) => data[os].metadata?.generated_at).filter((value): value is string =>
@@ -471,15 +468,6 @@ function App() {
       </div>
 
       <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 10px;">
-        <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px;">
-          <input
-            type="checkbox"
-            checked="${showPassRows}"
-            onChange="${(event: Event) => setShowPassRows((event.target as HTMLInputElement).checked)}"
-          />
-          show passing rows
-        </label>
-
         <input
           type="text"
           placeholder="Search repo, module, branch"
