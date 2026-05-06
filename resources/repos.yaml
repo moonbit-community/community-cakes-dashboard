@@ -48,10 +48,6 @@ repos:
     branch: main
   'https://github.com/moonbit-community/dot':
     branch: main
-    matrix:
-      exclude:
-        # Known issue: this repo has unusual paths that make git clone fail on Windows runners.
-        - os: windows-x64
   'https://github.com/moonbit-community/easing':
     branch: main
   'https://github.com/moonbit-community/either':
