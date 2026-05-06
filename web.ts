@@ -505,7 +505,14 @@ function App() {
                   title="${row.repo}"
                   style="padding: 7px; border: 1px solid #cbd5e1; font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
                 >
-                  ${row.repo}
+                  <a
+                    href="${row.repo}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style="display: block; color: #2563eb; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                  >
+                    ${row.repo}
+                  </a>
                 </td>
                 <td style="padding: 7px; border: 1px solid #cbd5e1; font-family: monospace;">${row.module_path}</td>
                 <td
