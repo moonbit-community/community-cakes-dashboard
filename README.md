@@ -4,13 +4,6 @@ Community Cakes Dashboard tracks the nightly-toolchain health of GitHub MoonBit 
 and `moon test` results for a configured repository matrix, uploads JSONL data and logs, then a static frontend renders
 the latest status.
 
-The implementation is standalone in this repository.
-
-## Naming
-
-The user-facing project name is **Community Cakes Dashboard**. Code symbols and file names that use `community` refer to
-the checked repository domain, not to a separate project name.
-
 ## Documentation
 
 - [Architecture](docs/architecture.md) explains the data flow, modules, and runtime boundaries.
