@@ -40,6 +40,10 @@ export function hasWarningDiagnostic(output: string): boolean {
   return WARNING_LINE_PATTERN.test(output);
 }
 
+export function shouldDisableGitAutocrlf(os: typeof Deno.build.os): boolean {
+  return os === 'windows';
+}
+
 async function commandOutputHasWarning(paths: { stdout_path: string; stderr_path: string }): Promise<boolean> {
   const [stdout, stderr] = await Promise.all([
     Deno.readTextFile(paths.stdout_path).catch(() => ''),
@@ -77,6 +81,9 @@ async function runGit(args: string[], cwd: string): Promise<string> {
 
 async function cloneRepo(task: CommunityTask, repoDir: string, workdir: string): Promise<string> {
   await runGit(['clone', '--depth', '1', '-b', task.branch, task.repo, repoDir], workdir);
+  if (shouldDisableGitAutocrlf(Deno.build.os)) {
+    await runGit(['config', '--global', 'core.autocrlf', 'false'], repoDir);
+  }
   return await runGit(['rev-parse', 'HEAD'], repoDir);
 }
 

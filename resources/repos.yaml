@@ -32,13 +32,6 @@ defaults:
       run_after: check_passed
 
 repos:
-  'https://github.com/moonbitlang/async':
-    branch: main
-    matrix:
-      exclude:
-        - backend: wasm
-        - backend: wasm-gc
-        - backend: js
   'https://github.com/moonbitlang/parser':
     branch: master
     matrix:
@@ -146,14 +139,6 @@ repos:
     branch: master
   'https://github.com/moonbit-community/pug-mbt':
     branch: main
-    overrides:
-      - match:
-          os:
-            - windows-x64
-        commands:
-          test:
-            skip: true
-            reason: 'This project never considered Windows newline character, so some testcase will fail on Windows.'
   'https://github.com/moonbit-community/qrc':
     branch: main
   'https://github.com/moonbit-community/quickxorhash':
