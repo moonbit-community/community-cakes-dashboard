@@ -32,6 +32,20 @@ defaults:
       run_after: check_passed
 
 repos:
+  'https://github.com/moonbitlang/async':
+    branch: main
+    matrix:
+      exclude:
+        - backend: wasm
+        - backend: wasm-gc
+        - backend: js
+  'https://github.com/moonbitlang/parser':
+    branch: master
+    matrix:
+      exclude:
+        - os: windows-x64
+  'https://github.com/moonbitlang/x':
+    branch: main
   'https://github.com/moonbit-community/adapton.mbt':
     branch: master
   'https://github.com/moonbit-community/Algorithms-Moonbit':
