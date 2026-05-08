@@ -29,6 +29,9 @@ jobs:
           - id: windows-x64
             runner: windows-latest
             mode: host
+    env: 
+      OS_PLATFORM: ${{ matrix.os.runner }}
+    
     runs-on: ${{ matrix.os.runner }}
     steps:
       - uses: actions/checkout@v5
