@@ -11,6 +11,52 @@ Deno.test('normalizeGitHubLink removes trailing slash and git suffix', () => {
   assertEquals(normalizeGitHubLink(' https://github.com/example/project.git/ '), 'https://github.com/example/project');
 });
 
+Deno.test('expandReposConfig propagates repo resource_intensive flag to tasks', () => {
+  const config: ReposConfig = {
+    schema_version: 1,
+    defaults: {
+      matrix: {
+        os: ['linux-x64'],
+        backends: ['wasm', 'js'],
+      },
+      commands: {
+        check: {
+          argv: ['moon', 'check', '--target', '{backend}'],
+        },
+        test: {
+          skip: true,
+          reason: 'not required for this test',
+        },
+      },
+    },
+    repos: {
+      'https://github.com/example/heavy': {
+        branch: 'main',
+        resource_intensive: true,
+        modules: [
+          { path: '.' },
+          { path: 'examples/foo' },
+        ],
+      },
+      'https://github.com/example/light': {
+        branch: 'main',
+      },
+      'https://github.com/example/explicit-light': {
+        branch: 'main',
+        resource_intensive: false,
+      },
+    },
+  };
+
+  const tasks = expandReposConfig(config, 'linux-x64');
+  const heavyTasks = tasks.filter((task) => task.repo === 'https://github.com/example/heavy');
+  const lightTasks = tasks.filter((task) => task.repo !== 'https://github.com/example/heavy');
+
+  assertEquals(heavyTasks.length, 4);
+  assertEquals(heavyTasks.every((task) => task.resource_intensive === true), true);
+  assertEquals(lightTasks.every((task) => task.resource_intensive === false), true);
+});
+
 Deno.test('expandReposConfig applies module matrix and ordered overrides', () => {
   const config: ReposConfig = {
     schema_version: 1,

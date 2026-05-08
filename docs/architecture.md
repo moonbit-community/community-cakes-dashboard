@@ -27,7 +27,7 @@ resources/repos.yaml
 | `lib/community_config.ts`               | GitHub URL normalization, YAML loading, matrix expansion, command template expansion. |
 | `lib/community_health.ts`               | Repository cloning, command execution, timeout handling, result/log writing.          |
 | `lib/moon.ts`                           | MoonBit toolchain version discovery.                                                  |
-| `lib/utils.ts`                          | Bounded concurrency helper.                                                           |
+| `lib/utils.ts`                          | Bounded and exclusive concurrency helpers.                                            |
 | `web.ts`                                | Preact static dashboard.                                                              |
 | `.github/workflows/community-cakes.yml` | Scheduled nightly collection and GitHub Pages publish.                                |
 
@@ -44,6 +44,12 @@ The collector expands `resources/repos.yaml` into tasks by:
 
 Matrix entries matched by `exclude` still emit `Excluded` records for both `check` and `test`. They are rendered as `EX`
 and ignored by row-level health classification.
+
+Executable tasks are grouped by `repo + branch` so one repository checkout covers its modules and backend matrix
+entries. Normal repository groups run with bounded concurrency from `--max-concurrent-repos` or `MAX_CONCURRENT_REPOS`.
+A repository with `resource_intensive: true` is scheduled as an exclusive group: the collector waits for any running
+normal groups to finish, runs that group alone on the current OS runner, then resumes normal scheduling. Multiple
+exclusive groups are serialized.
 
 Tests run only after the matching check is `Pass` or `Passed with Warning`. If check is `Error` or `Skipped`, test is
 written as `Skipped`.

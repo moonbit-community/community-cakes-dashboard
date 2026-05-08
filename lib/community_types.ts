@@ -84,6 +84,7 @@ export type DefaultsConfig = z.infer<typeof DefaultsSchema>;
 
 export const RepoConfigSchema = z.object({
   branch: z.string(),
+  resource_intensive: z.boolean().optional(),
   working_directory: z.string().optional(),
   modules: z.array(ModuleConfigSchema).optional(),
   matrix: MatrixConfigSchema.optional(),
@@ -115,6 +116,7 @@ export interface EffectiveCommandSpec {
 export interface CommunityTask {
   repo: string;
   branch: string;
+  resource_intensive: boolean;
   module_path: string;
   os: CommunityOS;
   backend: CommunityBackend;

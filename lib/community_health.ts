@@ -12,7 +12,7 @@ import {
   ExpandedCommand,
 } from './community_types.ts';
 import { getMoonVersion } from './moon.ts';
-import { executeWithConcurrency } from './utils.ts';
+import { executeWithExclusiveConcurrency } from './utils.ts';
 import { sha256Hex } from './log.ts';
 
 const DEFAULT_MAX_CONCURRENT_REPOS = 2;
@@ -61,6 +61,10 @@ function groupTasks(tasks: CommunityTask[]): CommunityTask[][] {
     groups.set(key, group);
   }
   return Array.from(groups.values());
+}
+
+function isResourceIntensiveGroup(tasks: CommunityTask[]): boolean {
+  return tasks.some((task) => task.resource_intensive === true);
 }
 
 async function runGit(args: string[], cwd: string): Promise<string> {
@@ -369,8 +373,11 @@ export async function communityStat(
   const maxConcurrentRepos = options.maxConcurrentRepos ??
     parseInt(Deno.env.get('MAX_CONCURRENT_REPOS') ?? String(DEFAULT_MAX_CONCURRENT_REPOS), 10);
 
-  const groupedResults = await executeWithConcurrency(
-    groups.map((group) => () => executeRepoGroup(outDir, group)),
+  const groupedResults = await executeWithExclusiveConcurrency(
+    groups.map((group) => ({
+      exclusive: isResourceIntensiveGroup(group),
+      run: () => executeRepoGroup(outDir, group),
+    })),
     maxConcurrentRepos,
   );
 

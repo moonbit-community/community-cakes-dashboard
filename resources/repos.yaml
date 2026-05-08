@@ -34,6 +34,7 @@ defaults:
 repos:
   'https://github.com/moonbitlang/parser':
     branch: master
+    resource_intensive: true
     matrix:
       exclude:
         - os: windows-x64

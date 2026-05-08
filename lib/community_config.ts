@@ -236,6 +236,7 @@ export function expandReposConfig(
           tasks.push({
             repo,
             branch: repoConfig.branch,
+            resource_intensive: repoConfig.resource_intensive === true,
             module_path: modulePath,
             os,
             backend,

@@ -39,6 +39,20 @@ repos:
 
 `working_directory` is the single-module shorthand. It defaults to `"."`.
 
+Set `resource_intensive: true` for a repository whose build or test workload should not share the current OS runner with
+another repository:
+
+```yaml
+repos:
+  'https://github.com/example/heavy-project':
+    branch: main
+    resource_intensive: true
+```
+
+Resource-intensive repositories still run as part of the current OS collection job, but the collector waits for all
+running repository groups to finish before starting one. Multiple resource-intensive repositories run one after another,
+ignoring `--max-concurrent-repos` for those exclusive groups.
+
 For multi-module repositories, use `modules`:
 
 ```yaml
