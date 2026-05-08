@@ -66,6 +66,12 @@ jobs:
           & "$env:USERPROFILE\.moon\bin\moon.exe" version --all
           & "$env:USERPROFILE\.moon\bin\moon.exe" update
 
+      - name: Print unix env info
+        if: ${{ matrix.os.mode == 'host' && runner.os != 'Windows' }}
+        run: |
+          node -p "process.arch"
+          node -p "v8.getHeapStatistics()"
+
       - name: Collect on host runner
         if: ${{ matrix.os.mode == 'host' }}
         shell: bash
