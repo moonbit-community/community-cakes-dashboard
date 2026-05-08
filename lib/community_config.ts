@@ -77,11 +77,21 @@ function normalizeMatrix(config: MatrixConfig): NormalizedMatrix {
 }
 
 function cloneCommandSpec(spec: CommandSpec): CommandSpec {
-  return {
-    ...spec,
-    argv: spec.argv ? [...spec.argv] : undefined,
-    env: spec.env ? { ...spec.env } : undefined,
-  };
+  const cloned = { ...spec };
+
+  if (spec.argv !== undefined) {
+    cloned.argv = [...spec.argv];
+  } else {
+    delete cloned.argv;
+  }
+
+  if (spec.env !== undefined) {
+    cloned.env = { ...spec.env };
+  } else {
+    delete cloned.env;
+  }
+
+  return cloned;
 }
 
 function mergeCommandSpec(base: CommandSpec, override?: CommandSpec): CommandSpec {

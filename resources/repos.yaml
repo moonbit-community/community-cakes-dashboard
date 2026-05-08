@@ -35,6 +35,10 @@ repos:
   'https://github.com/moonbitlang/parser':
     branch: master
     resource_intensive: true
+    commands:
+      test:
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
     matrix:
       exclude:
         - os: windows-x64

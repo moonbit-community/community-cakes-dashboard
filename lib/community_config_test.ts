@@ -57,6 +57,45 @@ Deno.test('expandReposConfig propagates repo resource_intensive flag to tasks', 
   assertEquals(lightTasks.every((task) => task.resource_intensive === false), true);
 });
 
+Deno.test('expandReposConfig preserves inherited command when override only sets env', () => {
+  const config: ReposConfig = {
+    schema_version: 1,
+    defaults: {
+      matrix: {
+        os: ['linux-x64'],
+        backends: ['js'],
+      },
+      commands: {
+        check: {
+          argv: ['moon', 'check', '--target', '{backend}'],
+        },
+        test: {
+          argv: ['moon', 'test', '--target', '{backend}'],
+          timeout_seconds: 1200,
+          run_after: 'check_passed',
+        },
+      },
+    },
+    repos: {
+      'https://github.com/example/project': {
+        branch: 'main',
+        commands: {
+          test: {
+            env: { NODE_OPTIONS: '--max-old-space-size=4096' },
+          },
+        },
+      },
+    },
+  };
+
+  const [task] = expandReposConfig(config, 'linux-x64');
+
+  assertEquals(task.commands.test.argv, ['moon', 'test', '--target', '{backend}']);
+  assertEquals(task.commands.test.env, { NODE_OPTIONS: '--max-old-space-size=4096' });
+  assertEquals(task.commands.test.timeout_seconds, 1200);
+  assertEquals(task.commands.test.run_after, 'check_passed');
+});
+
 Deno.test('expandReposConfig applies module matrix and ordered overrides', () => {
   const config: ReposConfig = {
     schema_version: 1,
