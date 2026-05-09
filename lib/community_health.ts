@@ -130,6 +130,8 @@ function baseRecord(
   commitSha: string | undefined,
   expandedCommand: ExpandedCommand | undefined,
 ): Omit<CommunityResultRecord, 'status'> {
+  const env = Object.keys(command.env).length > 0 ? { env: { ...command.env } } : {};
+
   return {
     repo: task.repo,
     branch: task.branch,
@@ -140,6 +142,7 @@ function baseRecord(
     step,
     working_directory: command.working_directory,
     expanded_command: expandedCommand,
+    ...env,
   };
 }
 

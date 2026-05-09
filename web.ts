@@ -221,6 +221,11 @@ function formatToolchainVersion(version: string[] | undefined): string {
   return version?.join('\n').trim() || '-';
 }
 
+function formatEnv(env: Record<string, string> | undefined): string {
+  const entries = Object.entries(env ?? {}).sort(([left], [right]) => left.localeCompare(right));
+  return entries.map(([key, value]) => `${key}=${value}`).join('\n');
+}
+
 function osSummary(row: RowData, os: OS): { status: CellStatus; label: string } {
   let pass = 0;
   let warning = 0;
@@ -303,6 +308,10 @@ async function openLogs(record: CommunityResultRecord | undefined) {
       content += `command: ${
         Array.isArray(record.expanded_command) ? record.expanded_command.join(' ') : record.expanded_command
       }\n`;
+    }
+    const env = formatEnv(record.env);
+    if (env) {
+      content += `env:\n${env}\n`;
     }
     if (record.exit_code !== undefined) content += `exit_code: ${record.exit_code}\n`;
     if (record.elapsed !== undefined) content += `elapsed: ${record.elapsed}s\n`;

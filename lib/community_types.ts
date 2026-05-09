@@ -144,6 +144,7 @@ export interface CommunityResultRecord {
   elapsed?: number;
   working_directory: string;
   expanded_command?: ExpandedCommand;
+  env?: Record<string, string>;
   exit_code?: number;
   stdout_path?: string;
   stderr_path?: string;
