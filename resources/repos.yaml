@@ -154,6 +154,9 @@ repos:
     branch: master
   'https://github.com/moonbit-community/Simplex_Noise':
     branch: main
+    matrix:
+      backends:
+        - native
   'https://github.com/moonbit-community/splice':
     branch: main
   'https://github.com/moonbit-community/sqlparser':
