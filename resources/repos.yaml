@@ -155,8 +155,10 @@ repos:
   'https://github.com/moonbit-community/Simplex_Noise':
     branch: main
     matrix:
-      backends:
-        - native
+      exclude:
+        - backend: wasm
+        - backend: wasm-gc
+        - backend: js
   'https://github.com/moonbit-community/splice':
     branch: main
   'https://github.com/moonbit-community/sqlparser':
