@@ -221,6 +221,19 @@ function formatToolchainVersion(version: string[] | undefined): string {
   return version?.join('\n').trim() || '-';
 }
 
+function formatDashboardCommit(data: DataMap): string {
+  const entries = OSES.map((os) => ({
+    os,
+    sha: data[os].metadata?.dashboard_commit_sha?.trim(),
+  })).filter((entry): entry is { os: OS; sha: string } => Boolean(entry.sha));
+  const uniqueShas = Array.from(new Set(entries.map((entry) => entry.sha)));
+
+  if (uniqueShas.length === 0) return '-';
+  if (uniqueShas.length === 1) return uniqueShas[0];
+
+  return entries.map(({ os, sha }) => `${os}: ${sha}`).join('\n');
+}
+
 function formatEnv(env: Record<string, string> | undefined): string {
   const entries = Object.entries(env ?? {}).sort(([left], [right]) => left.localeCompare(right));
   return entries.map(([key, value]) => `${key}=${value}`).join('\n');
@@ -457,6 +470,7 @@ function App() {
     version,
   ): version is string[] => Array.isArray(version) && version.length > 0);
   const toolchain = formatToolchainVersion(toolchainVersion);
+  const dashboardCommit = formatDashboardCommit(data);
 
   if (loading) {
     return html`
@@ -502,6 +516,12 @@ function App() {
         <div
           style="min-width: 320px; max-width: 680px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; background: #f8fafc; font-size: 12px; margin-left: auto;"
         >
+          <div>
+            <strong>Dashboard Commit</strong>
+            <pre
+              style="margin: 4px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace; font-size: 11px; line-height: 1.35;"
+            >${dashboardCommit}</pre>
+          </div>
           <div><strong>Generated</strong> <time title="${generatedAtRaw ?? ''}">${generatedAt}</time></div>
           <div style="margin-top: 4px;">
             <strong>Toolchain</strong>

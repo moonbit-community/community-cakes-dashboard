@@ -62,10 +62,10 @@ When the site is deployed to GitHub Pages, prepend the site base URL. For exampl
 https://<owner>.github.io/<repo>/data/community/linux-x64/data.jsonl
 ```
 
-Each file is newline-delimited JSON. The first line is metadata with `generated_at`, `runId`, `runNumber`, and
-`toolchainVersion`; every following line is one `repo + module + os + backend + step` result. There is no separate API
-server and no date archive yet, so these paths represent the latest published run. Check `generated_at` to confirm that
-the files are from today.
+Each file is newline-delimited JSON. The first line is metadata with `generated_at`, `runId`, `runNumber`,
+`dashboard_commit_sha`, and `toolchainVersion`; every following line is one `repo + module + os + backend + step`
+result. There is no separate API server and no date archive yet, so these paths represent the latest published run.
+Check `generated_at` to confirm that the files are from today.
 
 ## Development
 

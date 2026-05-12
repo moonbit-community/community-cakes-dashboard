@@ -128,6 +128,7 @@ export interface CommunityMetadata {
   runId: string;
   runNumber: string;
   generated_at: string;
+  dashboard_commit_sha?: string;
   toolchainVersion: string[];
 }
 

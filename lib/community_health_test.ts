@@ -1,4 +1,4 @@
-import { hasWarningDiagnostic, shouldDisableGitAutocrlf } from './community_health.ts';
+import { getDashboardCommitSha, hasWarningDiagnostic, shouldDisableGitAutocrlf } from './community_health.ts';
 
 function assertEquals(actual: unknown, expected: unknown) {
   if (JSON.stringify(actual) !== JSON.stringify(expected)) {
@@ -21,4 +21,18 @@ Deno.test('shouldDisableGitAutocrlf only enables the git setting on Windows', ()
   assertEquals(shouldDisableGitAutocrlf('windows'), true);
   assertEquals(shouldDisableGitAutocrlf('linux'), false);
   assertEquals(shouldDisableGitAutocrlf('darwin'), false);
+});
+
+Deno.test('getDashboardCommitSha prefers GITHUB_SHA', async () => {
+  const previous = Deno.env.get('GITHUB_SHA');
+  Deno.env.set('GITHUB_SHA', '  abc123  ');
+  try {
+    assertEquals(await getDashboardCommitSha(), 'abc123');
+  } finally {
+    if (previous === undefined) {
+      Deno.env.delete('GITHUB_SHA');
+    } else {
+      Deno.env.set('GITHUB_SHA', previous);
+    }
+  }
 });

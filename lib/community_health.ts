@@ -83,6 +83,17 @@ async function runGit(args: string[], cwd: string): Promise<string> {
   return stdoutText;
 }
 
+export async function getDashboardCommitSha(): Promise<string | undefined> {
+  const githubSha = Deno.env.get('GITHUB_SHA')?.trim();
+  if (githubSha) return githubSha;
+
+  try {
+    return await runGit(['rev-parse', 'HEAD'], Deno.cwd());
+  } catch {
+    return undefined;
+  }
+}
+
 async function cloneRepo(task: CommunityTask, repoDir: string, workdir: string): Promise<string> {
   await runGit(['clone', '--depth', '1', '-b', task.branch, task.repo, repoDir], workdir);
   if (shouldDisableGitAutocrlf(Deno.build.os)) {
@@ -391,6 +402,7 @@ export async function communityStat(
       runId: Deno.env.get('GITHUB_ACTION_RUN_ID') || '0',
       runNumber: Deno.env.get('GITHUB_ACTION_RUN_NUMBER') || '0',
       generated_at: new Date().toISOString(),
+      dashboard_commit_sha: await getDashboardCommitSha(),
       toolchainVersion: await getMoonVersion(),
     },
     result: [...groupedResults.flat(), ...excludedResult],

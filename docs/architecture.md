@@ -61,7 +61,7 @@ A successful check becomes `Passed with Warning` when either command output stre
 
 Each `data/community/<os>/data.jsonl` file contains:
 
-- line 1: metadata with GitHub run id, generation time, and `moon version --all` output
+- line 1: metadata with GitHub run id, generation time, dashboard repository commit SHA, and `moon version --all` output
 - line 2 onward: `CommunityResultRecord` objects; records include `env` when configuration adds environment variables
 
 Logs are written separately and referenced by `stdout_path` and `stderr_path`. The frontend fetches logs only when a
