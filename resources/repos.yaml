@@ -108,8 +108,26 @@ repos:
     branch: main
   'https://github.com/moonbit-community/moon_elk':
     branch: main
+    overrides:
+      - match:
+          os:
+            - windows-x64
+        commands:
+          check:
+            skip: true
+            reason: 'moon_elk has a package with too many files, causing moon check command lines to exceed the Windows API length limit.'
+          test:
+            skip: true
+            reason: 'moon_elk has a package with too many files, causing moon check command lines to exceed the Windows API length limit.'
   'https://github.com/moonbit-community/moon_rapier':
     branch: main
+    overrides:
+      - match:
+          backends:
+            - native
+        commands:
+          test:
+            timeout_seconds: 3600
   'https://github.com/moonbit-community/moon_skrifa':
     branch: main
   'https://github.com/moonbit-community/moon_wesl':
