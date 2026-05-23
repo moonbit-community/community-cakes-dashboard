@@ -209,6 +209,256 @@ repos:
     branch: master
   'https://github.com/moonbit-community/zipc':
     branch: main
+  'https://github.com/moonbit-community/BufferUtils':
+    branch: main
+    matrix:
+      backends:
+        - native
+  'https://github.com/moonbit-community/case_conv':
+    branch: master
+  'https://github.com/moonbit-community/coreutils':
+    branch: main
+    matrix:
+      os:
+        - linux-x64
+      backends:
+        - native
+    commands:
+      test:
+        shell: 'moon test --target {backend} && for i in tests/*.sh; do echo "$i"; bash "$i"; done'
+  'https://github.com/moonbit-community/diago':
+    branch: main
+  'https://github.com/moonbit-community/fuzzyscore.mbt':
+    branch: main
+  'https://github.com/moonbit-community/graphviz':
+    branch: main
+    resource_intensive: true
+  'https://github.com/moonbit-community/harfbuzz.mbt':
+    branch: main
+  'https://github.com/moonbit-community/html5-mbt':
+    branch: main
+  'https://github.com/moonbit-community/http_router':
+    branch: main
+    matrix:
+      os:
+        - linux-x64
+      backends:
+        - native
+    commands:
+      test:
+        shell: 'ulimit -s 8176 && moon test --target {backend}'
+  'https://github.com/moonbit-community/illu-clone.mbt':
+    branch: master
+  'https://github.com/moonbit-community/illu-lazy.mbt':
+    branch: master
+  'https://github.com/moonbit-community/immut_deque':
+    branch: master
+  'https://github.com/moonbit-community/json':
+    branch: master
+  'https://github.com/moonbit-community/json_deriving':
+    branch: main
+  'https://github.com/moonbit-community/liquid-moonbit':
+    branch: main
+  'https://github.com/moonbit-community/lua.mbt':
+    branch: master
+  'https://github.com/moonbit-community/moonbee':
+    branch: main
+    matrix:
+      backends:
+        - native
+  'https://github.com/moonbit-community/moonbit-scheme-r6rs':
+    branch: main
+    commands:
+      test:
+        skip: true
+        reason: 'Upstream CI only runs moon check; no moon test step.'
+  'https://github.com/moonbit-community/moonpython':
+    branch: main
+    commands:
+      test:
+        skip: true
+        reason: 'Upstream CI has no moon test step.'
+  'https://github.com/moonbit-community/moonyacc-example-arithmetic':
+    branch: main
+  'https://github.com/moonbit-community/moon_cosmic':
+    branch: master
+  'https://github.com/moonbit-community/moon_cpal':
+    branch: main
+    resource_intensive: true
+    matrix:
+      backends:
+        - native
+    modules:
+      - path: '.'
+        commands:
+          check:
+            shell: 'moon build --target {backend}'
+            timeout_seconds: 1500
+          test:
+            shell: 'moon test --target {backend} && moon run --target {backend} cmd/enumerate -q'
+            timeout_seconds: 1500
+      - path: 'ci/downstream_smoke'
+        commands:
+          check:
+            shell: 'moon check --target {backend} && moon build --target {backend}'
+            timeout_seconds: 1500
+          test:
+            skip: true
+            reason: 'Upstream CI uses this module only for downstream check/build smoke.'
+  'https://github.com/moonbit-community/moon_swash':
+    branch: master
+  'https://github.com/moonbit-community/Multiset':
+    branch: main
+  'https://github.com/moonbit-community/openssl.mbt':
+    branch: main
+    matrix:
+      backends:
+        - native
+  'https://github.com/moonbit-community/pdf.mbt':
+    branch: master
+  'https://github.com/moonbit-community/rijndael.mbt':
+    branch: master
+  'https://github.com/moonbit-community/ShellFrame':
+    branch: main
+    matrix:
+      os:
+        - linux-x64
+      backends:
+        - native
+    commands:
+      check:
+        shell: 'sudo apt-get update && sudo apt-get install -y libmagickwand-dev && moon check --target {backend}'
+  'https://github.com/moonbit-community/sqlite3.mbt':
+    branch: main
+    matrix:
+      backends:
+        - native
+  'https://github.com/moonbit-community/starter':
+    branch: main
+  'https://github.com/moonbit-community/sw-http-server':
+    branch: main
+    matrix:
+      backends:
+        - native
+  'https://github.com/moonbit-community/sw-socket':
+    branch: main
+    matrix:
+      os:
+        - linux-x64
+        - macos-arm64
+      backends:
+        - native
+    commands:
+      test:
+        shell: 'moon test --target {backend} && moon test --target {backend} --release && moon test --doc'
+  'https://github.com/moonbit-community/sw-terminfo':
+    branch: main
+  'https://github.com/moonbit-community/tar':
+    branch: main
+  'https://github.com/moonbit-community/tch-mbt':
+    branch: master
+    resource_intensive: true
+    matrix:
+      os:
+        - linux-x64
+      backends:
+        - native
+    commands:
+      check:
+        shell: 'wget https://download.pytorch.org/libtorch/nightly/cpu/libtorch-shared-with-deps-latest.zip && unzip libtorch-shared-with-deps-latest.zip && moon check --target {backend}'
+        timeout_seconds: 3600
+      test:
+        shell: 'CMAKE_PREFIX_PATH="$PWD/libtorch" bash build.sh'
+        timeout_seconds: 3600
+  'https://github.com/moonbit-community/tonyfettes-dl':
+    branch: main
+    matrix:
+      os:
+        - linux-x64
+        - macos-arm64
+      backends:
+        - native
+  'https://github.com/moonbit-community/tonyfettes-moon-clib':
+    branch: main
+    matrix:
+      os:
+        - linux-x64
+    commands:
+      test:
+        shell: 'ulimit -s 8176 && moon test --target {backend}'
+  'https://github.com/moonbit-community/tonyfettes-small':
+    branch: main
+  'https://github.com/moonbit-community/unicode_data':
+    branch: main
+    matrix:
+      os:
+        - linux-x64
+    commands:
+      test:
+        shell: 'ulimit -s 8176 && moon test --target {backend}'
+  'https://github.com/moonbit-community/uuidm':
+    branch: main
+  'https://github.com/moonbit-community/vscode.mbt':
+    branch: master
+    matrix:
+      backends:
+        - js
+  'https://github.com/moonbit-community/wasip2':
+    branch: main
+    matrix:
+      backends:
+        - wasm
+  'https://github.com/moonbit-community/which-mbt':
+    branch: main
+    overrides:
+      - match:
+          os:
+            - linux-x64
+            - macos-arm64
+        commands:
+          test:
+            skip: true
+            reason: 'Upstream CI only runs tests on Windows.'
+      - match:
+          backends:
+            - wasm
+            - wasm-gc
+        commands:
+          test:
+            skip: true
+            reason: 'Upstream CI only tests native and js targets.'
+  'https://github.com/moonbit-community/xml-mbt':
+    branch: main
+    matrix:
+      os:
+        - linux-x64
+    commands:
+      test:
+        shell: 'ulimit -s 8176 && moon test --target {backend}'
+  'https://github.com/moonbit-community/XMLParser':
+    branch: main
+    overrides:
+      - match:
+          os:
+            - linux-x64
+            - macos-arm64
+        commands:
+          test:
+            shell: 'if [ ! -d resource ]; then sh scripts/init.sh; fi && moon test --target {backend} && moon test --release --target {backend}'
+      - match:
+          os:
+            - windows-x64
+        commands:
+          test:
+            shell: 'pwsh -NoProfile -ExecutionPolicy Bypass -Command "if (-not (Test-Path resource)) { ./scripts/init.ps1 }; moon test --target {backend}; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; moon test --release --target {backend}; exit $LASTEXITCODE"'
+  'https://github.com/moonbit-community/yaml.mbt':
+    branch: main
+    matrix:
+      os:
+        - linux-x64
+    commands:
+      test:
+        shell: 'ulimit -s 8176 && moon test --target {backend}'
   'https://github.com/moonbit-community/zstd':
     branch: main
     overrides:
