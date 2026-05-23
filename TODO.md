@@ -1,5 +1,21 @@
 # TODO
 
+## Revisit Repository Candidates
+
+```csv
+repo,branch
+https://github.com/moonbit-community/dotenv,main
+https://github.com/moonbit-community/moon_rsa,master
+https://github.com/moonbit-community/colors,master
+https://github.com/moonbit-community/godot.mbt,master
+https://github.com/moonbit-community/matplotlib.mbt,master
+https://github.com/moonbit-community/rabbita_xterm,main
+https://github.com/moonbit-community/tonyfettes-raylib,main
+https://github.com/moonbit-community/vg,main
+https://github.com/moonbit-community/wasip1,main
+https://github.com/moonbit-community/window,main
+```
+
 ## Add Repository Clone Cache
 
 Current collection uses fresh shallow clones:
