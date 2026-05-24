@@ -331,8 +331,10 @@ repos:
   'https://github.com/moonbit-community/sqlite3.mbt':
     branch: main
     matrix:
-      backends:
-        - native
+      exclude:
+        - backend: wasm
+        - backend: wasm-gc
+        - backend: js
   'https://github.com/moonbit-community/starter':
     branch: main
   'https://github.com/moonbit-community/sw-http-server':
@@ -373,29 +375,17 @@ repos:
   'https://github.com/moonbit-community/tonyfettes-dl':
     branch: main
     matrix:
-      os:
-        - linux-x64
-        - macos-arm64
-      backends:
-        - native
+      exclude:
+        - os: windows-x64
+        - backend: wasm
+        - backend: wasm-gc
+        - backend: js
   'https://github.com/moonbit-community/tonyfettes-moon-clib':
     branch: main
-    matrix:
-      os:
-        - linux-x64
-    commands:
-      test:
-        shell: 'ulimit -s 8176 && moon test --target {backend}'
   'https://github.com/moonbit-community/tonyfettes-small':
     branch: main
   'https://github.com/moonbit-community/unicode_data':
     branch: main
-    matrix:
-      os:
-        - linux-x64
-    commands:
-      test:
-        shell: 'ulimit -s 8176 && moon test --target {backend}'
   'https://github.com/moonbit-community/uuidm':
     branch: main
   'https://github.com/moonbit-community/vscode.mbt':
@@ -429,12 +419,6 @@ repos:
             reason: 'Upstream CI only tests native and js targets.'
   'https://github.com/moonbit-community/xml-mbt':
     branch: main
-    matrix:
-      os:
-        - linux-x64
-    commands:
-      test:
-        shell: 'ulimit -s 8176 && moon test --target {backend}'
   'https://github.com/moonbit-community/XMLParser':
     branch: main
     overrides:
@@ -453,12 +437,6 @@ repos:
             shell: 'pwsh -NoProfile -ExecutionPolicy Bypass -Command "if (-not (Test-Path resource)) { ./scripts/init.ps1 }; moon test --target {backend}; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; moon test --release --target {backend}; exit $LASTEXITCODE"'
   'https://github.com/moonbit-community/yaml.mbt':
     branch: main
-    matrix:
-      os:
-        - linux-x64
-    commands:
-      test:
-        shell: 'ulimit -s 8176 && moon test --target {backend}'
   'https://github.com/moonbit-community/zstd':
     branch: main
     overrides:
