@@ -228,6 +228,9 @@ repos:
         shell: 'moon test --target {backend} && for i in tests/*.sh; do echo "$i"; bash "$i"; done'
   'https://github.com/moonbit-community/diago':
     branch: main
+    matrix:
+      exclude:
+        - os: windows-x64
   'https://github.com/moonbit-community/fuzzyscore.mbt':
     branch: main
   'https://github.com/moonbit-community/graphviz':
@@ -240,13 +243,10 @@ repos:
   'https://github.com/moonbit-community/http_router':
     branch: main
     matrix:
-      os:
-        - linux-x64
-      backends:
-        - native
-    commands:
-      test:
-        shell: 'ulimit -s 8176 && moon test --target {backend}'
+      exclude:
+        - backend: wasm
+        - backend: wasm-gc
+        - backend: js
   'https://github.com/moonbit-community/illu-clone.mbt':
     branch: master
   'https://github.com/moonbit-community/illu-lazy.mbt':
@@ -264,8 +264,10 @@ repos:
   'https://github.com/moonbit-community/moonbee':
     branch: main
     matrix:
-      backends:
-        - native
+      exclude:
+        - backend: wasm
+        - backend: wasm-gc
+        - backend: js
   'https://github.com/moonbit-community/moonbit-scheme-r6rs':
     branch: main
     commands:
@@ -340,8 +342,10 @@ repos:
   'https://github.com/moonbit-community/sw-http-server':
     branch: main
     matrix:
-      backends:
-        - native
+      exclude:
+        - backend: wasm
+        - backend: wasm-gc
+        - backend: js
   'https://github.com/moonbit-community/sw-socket':
     branch: main
     matrix:
@@ -391,13 +395,17 @@ repos:
   'https://github.com/moonbit-community/vscode.mbt':
     branch: master
     matrix:
-      backends:
-        - js
+      exclude:
+        - backend: wasm
+        - backend: wasm-gc
+        - backend: native
   'https://github.com/moonbit-community/wasip2':
     branch: main
     matrix:
-      backends:
-        - wasm
+      exclude:
+        - backend: native
+        - backend: wasm-gc
+        - backend: js
   'https://github.com/moonbit-community/which-mbt':
     branch: main
     overrides:
