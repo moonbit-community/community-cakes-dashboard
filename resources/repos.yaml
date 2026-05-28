@@ -212,8 +212,10 @@ repos:
   'https://github.com/moonbit-community/BufferUtils':
     branch: main
     matrix:
-      backends:
-        - native
+      exclude:
+        - backend: wasm
+        - backend: wasm-gc
+        - backend: js
   'https://github.com/moonbit-community/case_conv':
     branch: master
   'https://github.com/moonbit-community/coreutils':
@@ -273,16 +275,12 @@ repos:
         - backend: js
   'https://github.com/moonbit-community/moonbit-scheme-r6rs':
     branch: main
-    commands:
-      test:
-        skip: true
-        reason: 'Upstream CI only runs moon check; no moon test step.'
   'https://github.com/moonbit-community/moonpython':
     branch: main
     commands:
       test:
         skip: true
-        reason: 'Upstream CI has no moon test step.'
+        reason: 'temporarily disable'
   'https://github.com/moonbit-community/moonyacc-example-arithmetic':
     branch: main
   'https://github.com/moonbit-community/moon_cosmic':
@@ -309,7 +307,7 @@ repos:
             timeout_seconds: 1500
           test:
             skip: true
-            reason: 'Upstream CI uses this module only for downstream check/build smoke.'
+            reason: 'this module only for downstream check/build'
   'https://github.com/moonbit-community/moon_swash':
     branch: master
   'https://github.com/moonbit-community/Multiset':
@@ -317,8 +315,11 @@ repos:
   'https://github.com/moonbit-community/openssl.mbt':
     branch: main
     matrix:
-      backends:
-        - native
+      exclude:
+        - os: windows-x64
+        - backend: wasm
+        - backend: wasm-gc
+        - backend: js
   'https://github.com/moonbit-community/pdf.mbt':
     branch: master
   'https://github.com/moonbit-community/rijndael.mbt':
@@ -326,10 +327,12 @@ repos:
   'https://github.com/moonbit-community/ShellFrame':
     branch: main
     matrix:
-      os:
-        - linux-x64
-      backends:
-        - native
+      exclude:
+        - os: macos-arm64
+        - os: windows-x64
+        - backend: wasm
+        - backend: wasm-gc
+        - backend: js
     commands:
       check:
         shell: 'sudo apt-get update && sudo apt-get install -y libmagickwand-dev && moon check --target {backend}'
