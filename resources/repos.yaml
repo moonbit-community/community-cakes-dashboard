@@ -236,6 +236,9 @@ repos:
   'https://github.com/moonbit-community/graphviz':
     branch: main
     resource_intensive: true
+    commands:
+      check:
+        shell: 'git submodule update --init --recursive && moon check --target {backend}'
   'https://github.com/moonbit-community/harfbuzz.mbt':
     branch: main
   'https://github.com/moonbit-community/html5-mbt':
