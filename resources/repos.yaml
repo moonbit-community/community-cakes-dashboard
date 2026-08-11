@@ -74,8 +74,6 @@ repos:
     branch: master
   'https://github.com/moonbit-community/GB18030':
     branch: main
-  'https://github.com/moonbit-community/gitignore':
-    branch: main
   'https://github.com/moonbit-community/hashbrown':
     branch: main
   'https://github.com/moonbit-community/illu-path':
