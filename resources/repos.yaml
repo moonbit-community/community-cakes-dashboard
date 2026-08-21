@@ -207,13 +207,6 @@ repos:
     branch: master
   'https://github.com/moonbit-community/zipc':
     branch: main
-  'https://github.com/moonbit-community/BufferUtils':
-    branch: main
-    matrix:
-      exclude:
-        - backend: wasm
-        - backend: wasm-gc
-        - backend: js
   'https://github.com/moonbit-community/case_conv':
     branch: master
   'https://github.com/moonbit-community/coreutils':
