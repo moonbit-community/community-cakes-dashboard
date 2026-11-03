@@ -229,6 +229,10 @@ repos:
   'https://github.com/moonbit-community/graphviz':
     branch: main
     resource_intensive: true
+    matrix:
+      backends:
+        - wasm
+        - native
     commands:
       check:
         shell: 'git submodule update --init --recursive && moon check --target {backend}'
