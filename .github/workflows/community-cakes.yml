@@ -45,20 +45,20 @@ jobs:
         if: ${{ runner.os == 'Windows' }}
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Install MoonBit nightly on Unix
+      - name: Install MoonBit pre-release on Unix
         if: ${{ matrix.os.mode == 'host' && runner.os != 'Windows' }}
         shell: bash
         run: |
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s nightly
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s pre-release
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
           "$HOME/.moon/bin/moon" version --all
           "$HOME/.moon/bin/moon" update
 
-      - name: Install MoonBit nightly on Windows
+      - name: Install MoonBit pre-release on Windows
         if: ${{ matrix.os.mode == 'host' && runner.os == 'Windows' }}
         shell: powershell
         env:
-          MOONBIT_INSTALL_VERSION: nightly
+          MOONBIT_INSTALL_VERSION: pre-release
         run: |
           Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
           irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
